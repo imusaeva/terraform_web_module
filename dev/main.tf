@@ -32,3 +32,19 @@ module "alb" {
   egress_protocol = "-1"
   sg_cidr         = "0.0.0.0/0"
 }
+
+######## Root module for ASG ###########
+module "asg" {
+  source              = "/home/ec2-user/terraform_web_module/module/asg"
+  env                 = "dev"
+  max_size            = "5"
+  min_size            = "2"
+  desired_capacity    = "2"
+  force_delete        = "true"
+  instance_type       = "t2.micro"
+  project             = "akumoSolutions"
+  web_ports           = ["80", "443", "22"]
+  vpc_id = module.vpc.vpc_id
+  vpc_zone_identifier = module.vpc.subnet_id
+  lb_target_group_arn = module.alb.target_group_arn
+}
